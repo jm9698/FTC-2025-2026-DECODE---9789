@@ -1,4 +1,4 @@
-// Code package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
@@ -31,13 +31,12 @@ public class Drivetrain extends LinearOpMode {
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
       // Put run blocks here.
+      
       while (opModeIsActive()) {
         // Put loop blocks here.
         
         double leftSpeed = gamepad1.left_stick_y;
         double rightSpeed = gamepad1.right_stick_y;
-
-        
         backright.setPower(0.75 * (rightSpeed));
         frontright.setPower(0.75 * (rightSpeed));
         backleft.setPower(0.75 * (leftSpeed));
@@ -50,6 +49,6 @@ public class Drivetrain extends LinearOpMode {
         telemetry.addData("Back Right Pow", backright.getPower());
         telemetry.update();
     }
-    }
-    }
-    }
+  }
+}
+}
