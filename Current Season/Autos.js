@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Auto (First 2025-26 Version)")
+@Autonomous(name = "Auto - Red - Middle")
 public class Autos extends LinearOpMode {
 
 private DcMotor backleft;
@@ -47,24 +47,28 @@ waitForStart();
     frontleft.setPower(-0.3);
     frontright.setPower(-0.3);
     }
+    //Forward 2 s
     else if (runtime.seconds() <= 5) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
     }
+    //Stop 3 s
     else if (runtime.seconds() <= 6){
     backleft.setPower(0.4);
     backright.setPower(-0.4);
     frontleft.setPower(0.4);
     frontright.setPower(-0.4);
     }
+    //Rotate Right 1 s
     else if (runtime.seconds() <= 7) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
     }
+    //Stop 1 s
         telemetry.addData("Frontleft Pow", frontleft.getPower());
         telemetry.addData("Front Right Pow", frontright.getPower());
         telemetry.addData("Back Left Pow", backleft.getPower());
