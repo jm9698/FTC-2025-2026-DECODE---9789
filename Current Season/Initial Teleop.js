@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.lang.Math;
 
-@TeleOp(name = "Telop 2024-2025 (Blocks to Java)")
+@TeleOp(name = "Telop 2025-2026")
 public class Drivetrain extends LinearOpMode {
 
   private DcMotor backleft;
