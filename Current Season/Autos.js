@@ -39,7 +39,7 @@ waitForStart();
       //Set other motors' modes as required
       
       //Set inital servo positions as required
-
+//Red Version
     while (opModeIsActive()) {
     if (runtime.seconds() <= 2){
     backleft.setPower(0.3);
@@ -47,6 +47,45 @@ waitForStart();
     frontleft.setPower(-0.3);
     frontright.setPower(-0.3);
     }
+    //forward 2 s
+    if (runtime.seconds() <= 3){
+    backleft.setPower(0);
+    backright.setPower(0);
+    frontleft.setPower(0);
+    frontright.setPower(0);
+    //rotate right 1 s
+    if (runtime.seconds() <= 5){
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(-0.3);
+    frontright.setPower(-0.3);
+    //forward 2 s
+   // if (runtime.seconds() <= 6){
+    //shoot function here
+
+//Blue version
+    while (opModeIsActive()) {
+    if (runtime.seconds() <= 2){
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(-0.3);
+    frontright.setPower(-0.3);
+    }
+    //forward 2 s
+    if (runtime.seconds() <= 3){
+    backleft.setPower(0);
+    backright.setPower(0);
+    frontleft.setPower(0);
+    frontright.setPower(0);
+    //rotate left 1 s
+    if (runtime.seconds() <= 5){
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(-0.3);
+    frontright.setPower(-0.3);
+    //forward 2 s
+   // if (runtime.seconds() <= 6){
+    //shoot function here
         telemetry.addData("Frontleft Pow", frontleft.getPower());
         telemetry.addData("Front Right Pow", frontright.getPower());
         telemetry.addData("Back Left Pow", backleft.getPower());
