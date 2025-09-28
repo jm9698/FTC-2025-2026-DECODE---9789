@@ -51,8 +51,6 @@ waitForStart();
         telemetry.addData("Front Right Pow", frontright.getPower());
         telemetry.addData("Back Left Pow", backleft.getPower());
         telemetry.addData("Back Right Pow", backright.getPower());
-        telemetry.addData("Right Arm Pow", rightarm.getPower());
-        telemetry.addData("Left Arm Pow", leftarm.getPower());
         //Add any extra telemetry
         telemetry.addData("Runtime", runtime.toString());
         telemetry.update();
