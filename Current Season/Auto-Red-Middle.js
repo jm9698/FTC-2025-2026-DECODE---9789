@@ -36,16 +36,20 @@ waitForStart();
       backright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      backleft.setDirection(DcMotor.Direction.REVERSE);
+      backright.setDirection(DcMotor.Direction.REVERSE);
+      frontleft.setDirection(DcMotor.Direction.REVERSE);
+      frontright.setDirection(DcMotor.Direction.REVERSE);
       //Set other motors' modes as required
     }
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
     if (runtime.seconds() <= 2){
-    backleft.setPower(-0.3);
-    backright.setPower(-0.3);
-    frontleft.setPower(-0.3);
-    frontright.setPower(-0.3);
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(0.3);
+    frontright.setPower(0.3);
     }
     //Forward 2 s
     else if (runtime.seconds() <= 5) {
@@ -55,18 +59,24 @@ waitForStart();
     frontright.setPower(0);
     }
     //Stop 3 s
-    else if (runtime.seconds() <= 6){
-    backleft.setPower(0.4);
-    backright.setPower(-0.4);
-    frontleft.setPower(0.4);
-    frontright.setPower(-0.4);
+    else if (runtime.seconds() <= 5.4){
+    backleft.setPower(-0.4);
+    backright.setPower(0.4);
+    frontleft.setPower(-0.4);
+    frontright.setPower(0.4);
     }
-    //Rotate Right 1 s
+    //Rotate Right 0.4 s
     else if (runtime.seconds() <= 7) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
+    }
+    else if (runtime.seconds() <= 8) {
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(0.3);
+    frontright.setPower(0.3);
     }
     //Stop 1 s
         telemetry.addData("Frontleft Pow", frontleft.getPower());
@@ -78,4 +88,4 @@ waitForStart();
         telemetry.update();
     };
   };
-}
+};
