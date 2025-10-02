@@ -36,16 +36,20 @@ waitForStart();
       backright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      backleft.setDirection(DcMotor.Direction.REVERSE);
+      backright.setDirection(DcMotor.Direction.REVERSE);
+      frontleft.setDirection(DcMotor.Direction.REVERSE);
+      frontright.setDirection(DcMotor.Direction.REVERSE);
       //Set other motors' modes as required
     }
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
     if (runtime.seconds() <= 2){
-    backleft.setPower(-0.3);
-    backright.setPower(-0.3);
-    frontleft.setPower(-0.3);
-    frontright.setPower(-0.3);
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(0.3);
+    frontright.setPower(0.3);
     }
     //Taxi for any amount of time
     else if (runtime.seconds() <= 5) {
