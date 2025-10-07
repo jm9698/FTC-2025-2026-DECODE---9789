@@ -43,7 +43,7 @@ public class Drivetrain extends LinearOpMode {
         frontleft.setPower(0.75 * (leftSpeed));
         
       //negatives may need reversing if direction is incorrect
-      telemetry.addData("Frontleft Pow", frontleft.getPower());
+        telemetry.addData("Front left Pow", frontleft.getPower());
         telemetry.addData("Front Right Pow", frontright.getPower());
         telemetry.addData("Back Left Pow", backleft.getPower());
         telemetry.addData("Back Right Pow", backright.getPower());
