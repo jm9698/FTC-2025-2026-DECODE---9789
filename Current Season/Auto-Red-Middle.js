@@ -79,7 +79,7 @@ waitForStart();
     frontright.setPower(0.3);
     }
     //Stop 1 s
-        telemetry.addData("Frontleft Pow", frontleft.getPower());
+        telemetry.addData("Front left Pow", frontleft.getPower());
         telemetry.addData("Front Right Pow", frontright.getPower());
         telemetry.addData("Back Left Pow", backleft.getPower());
         telemetry.addData("Back Right Pow", backright.getPower());
