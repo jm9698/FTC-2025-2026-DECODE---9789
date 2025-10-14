@@ -45,25 +45,25 @@ waitForStart();
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
-    if (runtime.seconds() <= 2){
+    if (runtime.seconds() <= 4){
     backleft.setPower(0.3);
     backright.setPower(0.3);
     frontleft.setPower(0.3);
     frontright.setPower(0.3);
     }
-    //Forward 2 s
+    //Forward 4 s
     else if (runtime.seconds() <= 5) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
     }
-    //Stop 3 s
-    else if (runtime.seconds() <= 5.5){
-    backleft.setPower(0.4);
-    backright.setPower(-0.4);
-    frontleft.setPower(0.4);
-    frontright.setPower(-0.4);
+    //Stop 1 s
+    else if (runtime.seconds() <= 5.6){
+    backleft.setPower(-0.4);
+    backright.setPower(0.4);
+    frontleft.setPower(-0.4);
+    frontright.setPower(0.4);
     }
     //Rotate left 0.5 s
     else if (runtime.seconds() <= 7) {
@@ -78,6 +78,12 @@ waitForStart();
     backright.setPower(0.3);
     frontleft.setPower(0.3);
     frontright.setPower(0.3);
+    }
+    else if (runtime.seconds() <= 9.5) {
+    backleft.setPower(0);
+    backright.setPower(0);
+    frontleft.setPower(0);
+    frontright.setPower(0);
     }
         telemetry.addData("Front left Pow", frontleft.getPower());
         telemetry.addData("Front Right Pow", frontright.getPower());
