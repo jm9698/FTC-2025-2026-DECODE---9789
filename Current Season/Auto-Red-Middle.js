@@ -45,21 +45,21 @@ waitForStart();
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
-    if (runtime.seconds() <= 2){
+    if (runtime.seconds() <= 4){
     backleft.setPower(0.3);
     backright.setPower(0.3);
     frontleft.setPower(0.3);
     frontright.setPower(0.3);
     }
-    //Forward 2 s
+    //Forward 4 s
     else if (runtime.seconds() <= 5) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
     }
-    //Stop 3 s
-    else if (runtime.seconds() <= 5.4){
+    //Stop 1 s
+    else if (runtime.seconds() <= 5.6){
     backleft.setPower(-0.4);
     backright.setPower(0.4);
     frontleft.setPower(-0.4);
