@@ -14,6 +14,8 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor backright;
   private DcMotor frontleft;
   private DcMotor frontright;
+  private DcMotor leftshoot;
+  private DcMotor rightshoot;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
@@ -28,11 +30,15 @@ public class Drivetrain extends LinearOpMode {
     backright = hardwareMap.get(DcMotor.class, "backright");
     frontleft = hardwareMap.get(DcMotor.class, "frontleft");
     frontright = hardwareMap.get(DcMotor.class, "frontright");
+    leftshoot = hardwareMap.get(DcMotor.class, "leftshoot");
+    rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
 
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     backright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    leftshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    rightshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     
     waitForStart();
     if (opModeIsActive()) {
@@ -40,6 +46,8 @@ public class Drivetrain extends LinearOpMode {
       backright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      leftshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      rightshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
 
       // deadzone and slew settings
@@ -76,6 +84,18 @@ public class Drivetrain extends LinearOpMode {
         backleft.setPower(appliedLeft);
         frontleft.setPower(appliedLeft);
 
+        //short-distance shoot
+        if (gamepad1.a = true){
+        leftshoot.setPower(0.1)
+        rightshoot.setPower(-0.1)
+        }
+
+        //long-distance shoot
+        if (gamepad1.y = true){
+        leftshoot.setPower(0.3)
+        rightshoot.setPower(-0.3)
+        }
+        
         // Store for next loop
         prevLeftPower = appliedLeft;
         prevRightPower = appliedRight;
