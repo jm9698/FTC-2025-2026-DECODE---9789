@@ -14,6 +14,11 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor backright;
   private DcMotor frontleft;
   private DcMotor frontright;
+
+  // previous power for simple slew-rate limiting
+  private double prevLeftPower = 0.0;
+  private double prevRightPower = 0.0;
+  
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
    */
@@ -23,6 +28,12 @@ public class Drivetrain extends LinearOpMode {
     backright = hardwareMap.get(DcMotor.class, "backright");
     frontleft = hardwareMap.get(DcMotor.class, "frontleft");
     frontright = hardwareMap.get(DcMotor.class, "frontright");
+
+    backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    frontleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    backright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    frontright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    
     waitForStart();
     if (opModeIsActive()) {
       backleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -30,23 +41,52 @@ public class Drivetrain extends LinearOpMode {
       frontleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
+
+      // deadzone and slew settings
+      final double DEADZONE = 0.05;       // joystick noise threshold
+      final double MAX_DELTA = 0.04;      // max change in power per loop (tweak for responsiveness)
+      
       // Put run blocks here.
       
       while (opModeIsActive()) {
         // Put loop blocks here.
         
-        double leftSpeed = gamepad1.left_stick_y;
-        double rightSpeed = gamepad1.right_stick_y;
-        backright.setPower(0.75 * (rightSpeed));
-        frontright.setPower(0.75 * (rightSpeed));
-        backleft.setPower(0.75 * (leftSpeed));
-        frontleft.setPower(0.75 * (leftSpeed));
+        double leftStick = gamepad1.left_stick_y;
+        double rightStick = gamepad1.right_stick_y;
+
+        leftStick = (Math.abs(leftStick) < DEADZONE) ? 0.0 : leftStick;
+        rightStick = (Math.abs(rightStick) < DEADZONE) ? 0.0 : rightStick;
+
+        double targetLeft = 0.75 * leftStick;
+        double targetRight = 0.75 * rightStick;
+
+        double leftDelta = targetLeft - prevLeftPower;
+        if (leftDelta > MAX_DELTA) leftDelta = MAX_DELTA;
+        if (leftDelta < -MAX_DELTA) leftDelta = -MAX_DELTA;
+        double appliedLeft = prevLeftPower + leftDelta;
+
+        double rightDelta = targetRight - prevRightPower;
+        if (rightDelta > MAX_DELTA) rightDelta = MAX_DELTA;
+        if (rightDelta < -MAX_DELTA) rightDelta = -MAX_DELTA;
+        double appliedRight = prevRightPower + rightDelta;
         
-      //negatives may need reversing if direction is incorrect
-        telemetry.addData("Front left Pow", frontleft.getPower());
-        telemetry.addData("Front Right Pow", frontright.getPower());
-        telemetry.addData("Back Left Pow", backleft.getPower());
-        telemetry.addData("Back Right Pow", backright.getPower());
+        // Apply to motors (tank drive)
+        backright.setPower(appliedRight);
+        frontright.setPower(appliedRight);
+        backleft.setPower(appliedLeft);
+        frontleft.setPower(appliedLeft);
+
+        // Store for next loop
+        prevLeftPower = appliedLeft;
+        prevRightPower = appliedRight;
+        
+      telemetry.addData("stick L/R", "%.3f / %.3f", leftStick, rightStick);
+        telemetry.addData("target L/R", "%.3f / %.3f", targetLeft, targetRight);
+        telemetry.addData("applied L/R", "%.3f / %.3f", appliedLeft, appliedRight);
+        telemetry.addData("FL Pow", frontleft.getPower());
+        telemetry.addData("FR Pow", frontright.getPower());
+        telemetry.addData("BL Pow", backleft.getPower());
+        telemetry.addData("BR Pow", backright.getPower());
         telemetry.update();
     }
   }
