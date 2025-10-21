@@ -33,13 +33,14 @@ public class Drivetrain extends LinearOpMode {
     leftshoot = hardwareMap.get(DcMotor.class, "leftshoot");
     rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
 
+/*
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     backright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     leftshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     rightshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    
+*/
     waitForStart();
     if (opModeIsActive()) {
       backleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -85,16 +86,17 @@ public class Drivetrain extends LinearOpMode {
         frontleft.setPower(appliedLeft);
 
         //short-distance shoot
-        if (gamepad1.a = true){
-        leftshoot.setPower(0.1)
-        rightshoot.setPower(-0.1)
-        }
+        if (gamepad1.a){
+        leftshoot.setPower(-0.3);
+        rightshoot.setPower(0.3);
+        };
+
 
         //long-distance shoot
-        if (gamepad1.y = true){
-        leftshoot.setPower(0.3)
-        rightshoot.setPower(-0.3)
-        }
+        if (gamepad1.y){
+        leftshoot.setPower(1);
+        rightshoot.setPower(1);
+        };
         
         // Store for next loop
         prevLeftPower = appliedLeft;
@@ -107,8 +109,10 @@ public class Drivetrain extends LinearOpMode {
         telemetry.addData("FR Pow", frontright.getPower());
         telemetry.addData("BL Pow", backleft.getPower());
         telemetry.addData("BR Pow", backright.getPower());
+        telemetry.addData("LS Pow", leftshoot.getPower());
+        telemetry.addData("RS Pow", rightshoot.getPower());
         telemetry.update();
     }
   }
 }
-}
+};
