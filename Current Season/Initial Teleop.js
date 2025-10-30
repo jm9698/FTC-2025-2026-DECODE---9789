@@ -87,15 +87,15 @@ public class Drivetrain extends LinearOpMode {
 
         //short-distance shoot
         if (gamepad1.a){
-        leftshoot.setPower(-0.3);
-        rightshoot.setPower(0.3);
+        leftshoot.setPower(-0.45);
+        rightshoot.setPower(0.45);
         };
 
 
         //long-distance shoot
         if (gamepad1.y){
-        leftshoot.setPower(1);
-        rightshoot.setPower(1);
+        leftshoot.setPower(-0.76);
+        rightshoot.setPower(0.76);
         };
         
         // Store for next loop
