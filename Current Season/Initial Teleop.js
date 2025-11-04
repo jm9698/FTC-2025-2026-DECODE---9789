@@ -16,13 +16,14 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor frontright;
   private DcMotor leftshoot;
   private DcMotor rightshoot;
-  //Added booleans to toggle shoot modes on and off
-  private boolean shortshoot;
-  private boolean longshoot;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
   private double prevRightPower = 0.0;
+
+  // constants for shooting
+  private double shortShootPower = 0.45;
+  private double longShootPower = 0.76;
   
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
@@ -90,32 +91,15 @@ public class Drivetrain extends LinearOpMode {
 
         //short-distance shoot
         if (gamepad1.a){
-        if (shortshoot = false){
-        leftshoot.setPower(-0.45);
-        rightshoot.setPower(0.45);
-        shortshoot = true;
-        longshoot = false;
+        leftshoot.setPower(-shortShootPower);
+        rightshoot.setPower(shortShootPower);
         }
-        else {
-        leftshoot.setPower(0);
-        rightshoot.setPower(0);
-        shortshoot = false;
-        };
 
 
         //long-distance shoot
         if (gamepad1.y){
-        if (longshoot = false){
-        leftshoot.setPower(-0.76);
-        rightshoot.setPower(0.76);
-        longshoot = true;
-        shortshoot = false;
-        }
-        else {
-        leftshoot.setPower(0);
-        rightshoot.setPower(0);
-        longshoot = false;
-        }
+        leftshoot.setPower(-longShootPower);
+        rightshoot.setPower(longShootPower);
         };
         
         // Store for next loop
