@@ -20,6 +20,7 @@ public class Drivetrain extends LinearOpMode {
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
   private double prevRightPower = 0.0;
+  private double prevShootPower = 0.0;
 
   // constants for shooting
   private double shortShootPower = 0.45;
@@ -93,6 +94,7 @@ public class Drivetrain extends LinearOpMode {
         if (gamepad1.a){
         leftshoot.setPower(-shortShootPower);
         rightshoot.setPower(shortShootPower);
+        prevShootPower = shortShootPower;
         }
 
 
@@ -100,7 +102,29 @@ public class Drivetrain extends LinearOpMode {
         if (gamepad1.y){
         leftshoot.setPower(-longShootPower);
         rightshoot.setPower(longShootPower);
+        prevShootPower = longShootPower;
         };
+
+        //stop shooters on dpadDown
+        if (gamepad1.dpad_right){
+        leftshoot.setPower(0);
+        rightshoot.setPower(0);
+        prevShootPower = 0;
+        }
+
+        //Increase shoot power by 2%
+        if (gamepad1.dpad_up){
+        leftshoot.setPower(-prevShootPower - 0.02);
+        rightshoot.setPower(prevShootPower + 0.02);
+        prevShootPower = prevShootPower + 0.02;
+        }
+
+        //Decrease shoot power by 2%
+        if (gamepad1.dpad_down){
+        leftshoot.setPower(-prevShootPower + 0.02);
+        rightshoot.setPower(prevShootPower - 0.02);
+        prevShootPower = prevShootPower - 0.02;
+        }
         
         // Store for next loop
         prevLeftPower = appliedLeft;
