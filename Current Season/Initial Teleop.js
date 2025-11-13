@@ -22,6 +22,9 @@ public class Drivetrain extends LinearOpMode {
   private double prevRightPower = 0.0;
   private double prevShootPower = 0.0;
 
+  // cooldown to control shootPower increases
+  private double Cooldown = 1.0
+
   // constants for shooting
   private double shortShootPower = 0.45;
   private double longShootPower = 0.76;
@@ -114,16 +117,26 @@ public class Drivetrain extends LinearOpMode {
 
         //Increase shoot power by 2%
         if (gamepad1.dpad_up){
+       if (Cooldown < 1){
         leftshoot.setPower(-prevShootPower - 0.02);
         rightshoot.setPower(prevShootPower + 0.02);
+        Cooldown = 0
+        sleep(1000)
+        Cooldown = 1
         prevShootPower = prevShootPower + 0.02;
+        }
         }
 
         //Decrease shoot power by 2%
         if (gamepad1.dpad_down){
+      if (Cooldown < 1){
         leftshoot.setPower(-prevShootPower + 0.02);
         rightshoot.setPower(prevShootPower - 0.02);
+        Cooldown = 0
+        sleep(1000)
+        Cooldown = 1
         prevShootPower = prevShootPower - 0.02;
+        }
         }
         
         // Store for next loop
@@ -139,6 +152,7 @@ public class Drivetrain extends LinearOpMode {
         telemetry.addData("BR Pow", backright.getPower());
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
+        telemetry.addData("Cooldown", Cooldown);
         telemetry.update();
     }
   }
