@@ -16,15 +16,17 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor frontright;
   private DcMotor leftshoot;
   private DcMotor rightshoot;
+  private DcMotor intake;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
   private double prevRightPower = 0.0;
   private double prevShootPower = 0.0;
+  private double prevIntakePower = 0.0;
 
-  // cooldown to control shootPower increases
-  private double Cooldown = 1.0
-
+// cooldown to control shootPower increases
+  private double Cooldown = 1.0;
+  
   // constants for shooting
   private double shortShootPower = 0.45;
   private double longShootPower = 0.76;
@@ -40,23 +42,28 @@ public class Drivetrain extends LinearOpMode {
     frontright = hardwareMap.get(DcMotor.class, "frontright");
     leftshoot = hardwareMap.get(DcMotor.class, "leftshoot");
     rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
+    intake = hardwareMap.get(DcMotor.class, "intake");
 
 /*
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     backright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
     frontright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    leftshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    rightshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-*/
+    */
+    //leftshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+    //rightshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
+
     waitForStart();
     if (opModeIsActive()) {
       backleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       backright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      frontleft.setDirection(DcMotor.Direction.REVERSE);
+      backleft.setDirection(DcMotor.Direction.REVERSE);
       leftshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       rightshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
 
       // deadzone and slew settings
@@ -74,8 +81,8 @@ public class Drivetrain extends LinearOpMode {
         leftStick = (Math.abs(leftStick) < DEADZONE) ? 0.0 : leftStick;
         rightStick = (Math.abs(rightStick) < DEADZONE) ? 0.0 : rightStick;
 
-        double targetLeft = 0.75 * leftStick;
-        double targetRight = 0.75 * rightStick;
+        double targetLeft = -0.75 * leftStick;
+        double targetRight = -0.75 * rightStick;
 
         double leftDelta = targetLeft - prevLeftPower;
         if (leftDelta > MAX_DELTA) leftDelta = MAX_DELTA;
@@ -95,7 +102,7 @@ public class Drivetrain extends LinearOpMode {
 
         //short-distance shoot
         if (gamepad1.a){
-        leftshoot.setPower(-shortShootPower);
+        leftshoot.setPower(shortShootPower * -1);
         rightshoot.setPower(shortShootPower);
         prevShootPower = shortShootPower;
         }
@@ -103,7 +110,7 @@ public class Drivetrain extends LinearOpMode {
 
         //long-distance shoot
         if (gamepad1.y){
-        leftshoot.setPower(-longShootPower);
+        leftshoot.setPower(longShootPower * -1);
         rightshoot.setPower(longShootPower);
         prevShootPower = longShootPower;
         };
@@ -117,28 +124,45 @@ public class Drivetrain extends LinearOpMode {
 
         //Increase shoot power by 2%
         if (gamepad1.dpad_up){
-       if (Cooldown < 1){
-        leftshoot.setPower(-prevShootPower - 0.02);
-        rightshoot.setPower(prevShootPower + 0.02);
-        Cooldown = 0
-        sleep(1000)
-        Cooldown = 1
-        prevShootPower = prevShootPower + 0.02;
-        }
+        leftshoot.setPower(-prevShootPower - 0.02 * Cooldown);
+        rightshoot.setPower(prevShootPower + 0.02 * Cooldown);
+        Cooldown = 0;
+        sleep(1000);
+        Cooldown = 1;
+        prevShootPower = prevShootPower + 0.02 * Cooldown;
         }
 
         //Decrease shoot power by 2%
         if (gamepad1.dpad_down){
-      if (Cooldown < 1){
-        leftshoot.setPower(-prevShootPower + 0.02);
-        rightshoot.setPower(prevShootPower - 0.02);
-        Cooldown = 0
-        sleep(1000)
-        Cooldown = 1
-        prevShootPower = prevShootPower - 0.02;
-        }
+        leftshoot.setPower(-prevShootPower + 0.02 * Cooldown);
+        rightshoot.setPower(prevShootPower - 0.02 * Cooldown);
+        Cooldown = 0;
+        sleep(1000);
+        Cooldown = 1;
+        prevShootPower = prevShootPower - 0.02 * Cooldown;
         }
         
+        
+        if (gamepad1.b){
+          if (prevIntakePower >= 0){
+          intake.setPower(-0.75);
+          prevIntakePower = -0.75;
+          }
+          else if (prevIntakePower < 0){
+            intake.setPower(0);
+            prevIntakePower = 0;
+          }
+        }
+        if (gamepad1.x){
+          if (prevIntakePower <= 0){
+          intake.setPower(0.75);
+          prevIntakePower = 0.75;
+          }
+          else if (prevIntakePower > 0){
+            intake.setPower(0);
+            prevIntakePower = 0;
+          }
+        }
         // Store for next loop
         prevLeftPower = appliedLeft;
         prevRightPower = appliedRight;
@@ -146,16 +170,16 @@ public class Drivetrain extends LinearOpMode {
       telemetry.addData("stick L/R", "%.3f / %.3f", leftStick, rightStick);
         telemetry.addData("target L/R", "%.3f / %.3f", targetLeft, targetRight);
         telemetry.addData("applied L/R", "%.3f / %.3f", appliedLeft, appliedRight);
-        telemetry.addData("FL Pow", frontleft.getPower());
-        telemetry.addData("FR Pow", frontright.getPower());
-        telemetry.addData("BL Pow", backleft.getPower());
-        telemetry.addData("BR Pow", backright.getPower());
+        telemetry.addData("Intake Power", intake.getPower());
+        telemetry.addData("Previous Intake Power", prevIntakePower);
+        //telemetry.addData("FL Pow", frontleft.getPower());
+        //telemetry.addData("FR Pow", frontright.getPower());
+        //telemetry.addData("BL Pow", backleft.getPower());
+        //telemetry.addData("BR Pow", backright.getPower());
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
-        telemetry.addData("Cooldown", Cooldown);
         telemetry.update();
     }
   }
-}
 }
 }
