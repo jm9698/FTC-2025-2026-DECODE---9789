@@ -17,6 +17,7 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor leftshoot;
   private DcMotor rightshoot;
   private DcMotor intake;
+  private Servo flicker;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
@@ -43,6 +44,7 @@ public class Drivetrain extends LinearOpMode {
     leftshoot = hardwareMap.get(DcMotor.class, "leftshoot");
     rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
     intake = hardwareMap.get(DcMotor.class, "intake");
+    flicker = hardwareMap.get(Servo.class, "flicker");
 
 /*
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
@@ -65,6 +67,7 @@ public class Drivetrain extends LinearOpMode {
       rightshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
+      flicker.setPosition(0);
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
@@ -141,7 +144,13 @@ public class Drivetrain extends LinearOpMode {
         Cooldown = 1;
         prevShootPower = prevShootPower - 0.02 * Cooldown;
         }
-        
+
+        if (gamepad1.left_bumper){
+          flicker.setPosition(0);
+        }
+        if (gamepad1.right_bumper){
+          flicker.setPosition(90);
+        }
         
         if (gamepad1.b){
           if (prevIntakePower >= 0){
@@ -172,12 +181,13 @@ public class Drivetrain extends LinearOpMode {
         telemetry.addData("applied L/R", "%.3f / %.3f", appliedLeft, appliedRight);
         telemetry.addData("Intake Power", intake.getPower());
         telemetry.addData("Previous Intake Power", prevIntakePower);
-        //telemetry.addData("FL Pow", frontleft.getPower());
-        //telemetry.addData("FR Pow", frontright.getPower());
-        //telemetry.addData("BL Pow", backleft.getPower());
-        //telemetry.addData("BR Pow", backright.getPower());
+        telemetry.addData("FL Pow", frontleft.getPower());
+        telemetry.addData("FR Pow", frontright.getPower());
+        telemetry.addData("BL Pow", backleft.getPower());
+        telemetry.addData("BR Pow", backright.getPower());
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
+        telemetry.addData("Flick Pos", flicker.getPosition());
         telemetry.update();
     }
   }
