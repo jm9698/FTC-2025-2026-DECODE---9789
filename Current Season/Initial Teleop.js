@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.lang.Math;
 
-@TeleOp(name = "Telop 2025-2026")
-public class Drivetrain extends LinearOpMode {
+@TeleOp(name = "Telop 2025-2026 - Beta")
+public class Drivetrainbeta extends LinearOpMode {
 
   private DcMotor backleft;
   private DcMotor backright;
@@ -18,6 +18,7 @@ public class Drivetrain extends LinearOpMode {
   private DcMotor rightshoot;
   private DcMotor intake;
   private Servo flicker;
+  private Servo flickerr;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
@@ -29,8 +30,8 @@ public class Drivetrain extends LinearOpMode {
   private double Cooldown = 1.0;
   
   // constants for shooting
-  private double shortShootPower = 0.45;
-  private double longShootPower = 0.76;
+  private double shortShootPower = 0.6;
+  private double longShootPower = 0.7;
   
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
@@ -45,6 +46,7 @@ public class Drivetrain extends LinearOpMode {
     rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
     intake = hardwareMap.get(DcMotor.class, "intake");
     flicker = hardwareMap.get(Servo.class, "flicker");
+    flickerr = hardwareMap.get(Servo.class, "flickerr");
 
 /*
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
@@ -68,6 +70,7 @@ public class Drivetrain extends LinearOpMode {
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
       flicker.setPosition(0);
+      flickerr.setPostion(0);
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
@@ -146,16 +149,16 @@ public class Drivetrain extends LinearOpMode {
         }
 
         if (gamepad1.left_bumper){
-          flicker.setPosition(0);
+          flickerr.setPosition(0);
         }
         if (gamepad1.right_bumper){
-          flicker.setPosition(90);
+          flickerr.setPosition(0.5);
         }
         
         if (gamepad1.b){
           if (prevIntakePower >= 0){
-          intake.setPower(-0.75);
-          prevIntakePower = -0.75;
+          intake.setPower(-1);
+          prevIntakePower = -1;
           }
           else if (prevIntakePower < 0){
             intake.setPower(0);
@@ -164,8 +167,8 @@ public class Drivetrain extends LinearOpMode {
         }
         if (gamepad1.x){
           if (prevIntakePower <= 0){
-          intake.setPower(0.75);
-          prevIntakePower = 0.75;
+          intake.setPower(1);
+          prevIntakePower = 1;
           }
           else if (prevIntakePower > 0){
             intake.setPower(0);
@@ -188,6 +191,7 @@ public class Drivetrain extends LinearOpMode {
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
         telemetry.addData("Flick Pos", flicker.getPosition());
+        telemetry.addData("Flick Pos2", flickerr.getPosition());
         telemetry.update();
     }
   }
