@@ -18,7 +18,7 @@ public class Drivetrainbeta extends LinearOpMode {
   private DcMotor rightshoot;
   private DcMotor intake;
   private Servo flicker;
-  private Servo flickerr;
+  private Servo flipper;
 
   // previous power for simple slew-rate limiting
   private double prevLeftPower = 0.0;
@@ -46,7 +46,7 @@ public class Drivetrainbeta extends LinearOpMode {
     rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
     intake = hardwareMap.get(DcMotor.class, "intake");
     flicker = hardwareMap.get(Servo.class, "flicker");
-    flickerr = hardwareMap.get(Servo.class, "flickerr");
+    flipper = hardwareMap.get(Servo.class, "flipper");
 
 /*
     backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
@@ -70,7 +70,7 @@ public class Drivetrainbeta extends LinearOpMode {
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
       flicker.setPosition(0);
-      flickerr.setPostion(0);
+      flipper.setPostion(0);
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
@@ -107,7 +107,7 @@ public class Drivetrainbeta extends LinearOpMode {
         frontleft.setPower(appliedLeft);
 
         //short-distance shoot
-        if (gamepad1.a){
+        if (gamepad2.a){
         leftshoot.setPower(shortShootPower * -1);
         rightshoot.setPower(shortShootPower);
         prevShootPower = shortShootPower;
@@ -115,21 +115,21 @@ public class Drivetrainbeta extends LinearOpMode {
 
 
         //long-distance shoot
-        if (gamepad1.y){
+        if (gamepad2.y){
         leftshoot.setPower(longShootPower * -1);
         rightshoot.setPower(longShootPower);
         prevShootPower = longShootPower;
         };
 
         //stop shooters on dpadDown
-        if (gamepad1.dpad_right){
+        if (gamepad2.dpad_right){
         leftshoot.setPower(0);
         rightshoot.setPower(0);
         prevShootPower = 0;
         }
 
         //Increase shoot power by 2%
-        if (gamepad1.dpad_up){
+        if (gamepad2.dpad_up){
         leftshoot.setPower(-prevShootPower - 0.02 * Cooldown);
         rightshoot.setPower(prevShootPower + 0.02 * Cooldown);
         Cooldown = 0;
@@ -139,7 +139,7 @@ public class Drivetrainbeta extends LinearOpMode {
         }
 
         //Decrease shoot power by 2%
-        if (gamepad1.dpad_down){
+        if (gamepad2.dpad_down){
         leftshoot.setPower(-prevShootPower + 0.02 * Cooldown);
         rightshoot.setPower(prevShootPower - 0.02 * Cooldown);
         Cooldown = 0;
@@ -149,10 +149,10 @@ public class Drivetrainbeta extends LinearOpMode {
         }
 
         if (gamepad1.left_bumper){
-          flickerr.setPosition(0);
+          flipper.setPosition(0);
         }
         if (gamepad1.right_bumper){
-          flickerr.setPosition(0.5);
+          flipper.setPosition(0.5);
         }
         
         if (gamepad1.b){
@@ -191,7 +191,7 @@ public class Drivetrainbeta extends LinearOpMode {
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
         telemetry.addData("Flick Pos", flicker.getPosition());
-        telemetry.addData("Flick Pos2", flickerr.getPosition());
+        telemetry.addData("Flip Pos", flipper.getPosition());
         telemetry.update();
     }
   }
