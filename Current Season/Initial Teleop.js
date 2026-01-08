@@ -70,7 +70,7 @@ public class Drivetrainbeta extends LinearOpMode {
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
       flicker.setPosition(0);
-      flipper.setPostion(0);
+      flipper.setPosition(0);
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
@@ -152,7 +152,7 @@ public class Drivetrainbeta extends LinearOpMode {
           flipper.setPosition(0);
         }
         if (gamepad1.right_bumper){
-          flipper.setPosition(0.5);
+          flipper.setPosition(1);
         }
         
         if (gamepad1.b){
