@@ -7,6 +7,26 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import java.lang.Math;
 
+//Gamepad Key
+  //Motors
+    //Drivetrain Motors -> Tank Drive
+    //Launch Motors ->
+      //Dpad_Left -> Start
+      //Dpad_Right -> Stop
+      //Dpad_Up -> Increase Speed
+      //Dpad_Down -> Decrease Speed
+    //Intake Motor ->
+      //Y -> Intake
+      //A -> Outtake
+  //Servos
+    //Flipper ->
+      //Left Bumper -> Reset
+      //Right Bumper -> Push Artifact
+    //Flicker ->
+      //X -> Reset
+      //B -> Flick
+  
+    
 @TeleOp(name = "Telop 2025-2026 - Beta")
 public class Drivetrainbeta extends LinearOpMode {
 
@@ -31,7 +51,7 @@ public class Drivetrainbeta extends LinearOpMode {
   
   // constants for shooting
   private double shortShootPower = 0.6;
-  private double longShootPower = 0.7;
+  private double longShootPower = 0.6;
   
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
@@ -107,29 +127,31 @@ public class Drivetrainbeta extends LinearOpMode {
         frontleft.setPower(appliedLeft);
 
         //short-distance shoot
-        if (gamepad2.a){
+        /*
+        if (gamepad1.a){
         leftshoot.setPower(shortShootPower * -1);
         rightshoot.setPower(shortShootPower);
         prevShootPower = shortShootPower;
         }
+        */
 
 
         //long-distance shoot
-        if (gamepad2.y){
+        if (gamepad1.dpad_left){
         leftshoot.setPower(longShootPower * -1);
         rightshoot.setPower(longShootPower);
         prevShootPower = longShootPower;
         };
 
         //stop shooters on dpadDown
-        if (gamepad2.dpad_right){
+        if (gamepad1.dpad_right){
         leftshoot.setPower(0);
         rightshoot.setPower(0);
         prevShootPower = 0;
         }
 
         //Increase shoot power by 2%
-        if (gamepad2.dpad_up){
+        if (gamepad1.dpad_up){
         leftshoot.setPower(-prevShootPower - 0.02 * Cooldown);
         rightshoot.setPower(prevShootPower + 0.02 * Cooldown);
         Cooldown = 0;
@@ -139,7 +161,7 @@ public class Drivetrainbeta extends LinearOpMode {
         }
 
         //Decrease shoot power by 2%
-        if (gamepad2.dpad_down){
+        if (gamepad1.dpad_down){
         leftshoot.setPower(-prevShootPower + 0.02 * Cooldown);
         rightshoot.setPower(prevShootPower - 0.02 * Cooldown);
         Cooldown = 0;
@@ -154,8 +176,14 @@ public class Drivetrainbeta extends LinearOpMode {
         if (gamepad1.right_bumper){
           flipper.setPosition(1);
         }
-        
+        if (gamepad1.x){
+          flicker.setPosition(0);
+        }
         if (gamepad1.b){
+          flicker.setPosition(1);
+        }
+        
+        if (gamepad1.y){
           if (prevIntakePower >= 0){
           intake.setPower(-1);
           prevIntakePower = -1;
@@ -165,7 +193,7 @@ public class Drivetrainbeta extends LinearOpMode {
             prevIntakePower = 0;
           }
         }
-        if (gamepad1.x){
+        if (gamepad1.a){
           if (prevIntakePower <= 0){
           intake.setPower(1);
           prevIntakePower = 1;
