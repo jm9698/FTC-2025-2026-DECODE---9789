@@ -89,28 +89,40 @@ waitForStart();
     }
     //Stop 1 s
     else if (runtime.seconds() <= 8) {
+    backleft.setPower(0.3);
+    backright.setPower(0.3);
+    frontleft.setPower(0.3);
+    frontright.setPower(0.3);
+    }
+    else if (runtime.seconds() <= 9.5) {
+    backleft.setPower(0);
+    backright.setPower(0);
+    frontleft.setPower(0);
+    frontright.setPower(0);
+    }
+    else if (runtime.seconds() <= 10.5) {
     leftshoot.setPower(-0.6);
     rightshoot.setPower(0.6);
     }
     //Allow 2 s to spin up to max speed
-    else if (runtime.seconds() <= 10) {
+    else if (runtime.seconds() <= 12.5) {
     flicker.setPosition(1);
     }
     //Flick top artifact into the launcher and reset after 1 second
-    else if (runtime.seconds() <= 11) {
+    else if (runtime.seconds() <= 13.5) {
     flicker.setPosition(0);
     }
-    else if (runtime.seconds() <= 11.5) {
+    else if (runtime.seconds() <= 14) {
     intake.setPower(-1);
     }
-    else if (runtime.seconds() <= 12) {
+    else if (runtime.seconds() <= 14.5) {
     flipper.setPosition(1);
     }
     //Run intake and flipper to prevent from getting stuck and launch the second artifact; reset flipper before last ball can launch
-    else if (runtime.seconds() <= 12.5) {
+    else if (runtime.seconds() <= 15) {
     flipper.setPosition(0);
     }
-    else if (runtime.seconds() <= 14.5) {
+    else if (runtime.seconds() <= 17) {
     flipper.setPosition(1);
     }
     //Allow a delay for launch motors to spin up, and launch the last ball
