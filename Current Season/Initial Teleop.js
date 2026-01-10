@@ -50,8 +50,8 @@ public class Drivetrainbeta extends LinearOpMode {
   private double Cooldown = 1.0;
   
   // constants for shooting
-  private double shortShootPower = 0.6;
-  private double longShootPower = 0.6;
+  private double shortShootPower = 0.55;
+  private double longShootPower = 0.55;
   
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
@@ -170,7 +170,7 @@ public class Drivetrainbeta extends LinearOpMode {
         prevShootPower = prevShootPower - 0.02 * Cooldown;
         }
 
-        if (gamepad1.left_bumper){
+        if (gamepad1.right_bumper.released){
           flipper.setPosition(0);
         }
         if (gamepad1.right_bumper){
