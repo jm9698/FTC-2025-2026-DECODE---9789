@@ -1,3 +1,21 @@
+/*
+Copyright 2025 FIRST Tech Challenge Team 23303
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+associated documentation files (the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial
+portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,8 +38,8 @@ import java.lang.Math;
       //A -> Outtake
   //Servos
     //Flipper ->
-      //Left Bumper -> Reset
       //Right Bumper -> Push Artifact
+      //onRelease -> Reset
     //Flicker ->
       //X -> Reset
       //B -> Flick
@@ -50,8 +68,8 @@ public class Drivetrainbeta extends LinearOpMode {
   private double Cooldown = 1.0;
   
   // constants for shooting
-  private double shortShootPower = 0.55;
-  private double longShootPower = 0.55;
+  private double shortShootPower = 0.58;
+  private double longShootPower = 0.58;
   
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
@@ -85,11 +103,14 @@ public class Drivetrainbeta extends LinearOpMode {
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setDirection(DcMotor.Direction.REVERSE);
       backleft.setDirection(DcMotor.Direction.REVERSE);
-      leftshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-      rightshoot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+      leftshoot.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+      rightshoot.setMode(DcMotor.RunMode.RUN_WITH_ENCODER);
+      //leftshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
+      //rightshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       //Initalize Servo positions here
-      flicker.setPosition(0);
+      //flicker.setDirection(Servo.Direction.REVERSE);
+      flicker.setPosition(0.5);
       flipper.setPosition(0);
 
       // deadzone and slew settings
@@ -170,23 +191,27 @@ public class Drivetrainbeta extends LinearOpMode {
         prevShootPower = prevShootPower - 0.02 * Cooldown;
         }
 
-        if (gamepad1.right_bumper.released){
+        if (gamepad1.rightBumperWasReleased()){
           flipper.setPosition(0);
+          flicker.setPosition(0.5);
         }
         if (gamepad1.right_bumper){
           flipper.setPosition(1);
+          flicker.setPosition(0.9);
         }
+        /*
         if (gamepad1.x){
           flicker.setPosition(0);
         }
         if (gamepad1.b){
           flicker.setPosition(1);
         }
+        */
         
         if (gamepad1.y){
           if (prevIntakePower >= 0){
-          intake.setPower(-1);
-          prevIntakePower = -1;
+          intake.setPower(-0.75);
+          prevIntakePower = -0.75;
           }
           else if (prevIntakePower < 0){
             intake.setPower(0);
@@ -195,8 +220,8 @@ public class Drivetrainbeta extends LinearOpMode {
         }
         if (gamepad1.a){
           if (prevIntakePower <= 0){
-          intake.setPower(1);
-          prevIntakePower = 1;
+          intake.setPower(0.75);
+          prevIntakePower = 0.75;
           }
           else if (prevIntakePower > 0){
             intake.setPower(0);
