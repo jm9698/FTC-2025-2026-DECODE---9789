@@ -71,6 +71,22 @@ public class Drivetrainbeta extends LinearOpMode {
   private double shortShootPower = 0.58;
   private double longShootPower = 0.58;
   
+  //function declarations
+  private void moveToPosition(int targetTicks, double power) {
+  leftshoot.setTargetPosition(targetTicks);
+  rightshoot.setTargetPosition(targetTicks);
+  if (leftshoot.getCurrentPosition() > 10000 && rightshoot.getCurrentPosition() > 10000){
+  leftshoot.setPower(0);
+  rightshoot.setPower(0);
+  }
+  else {
+  leftshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+  rightshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+  leftshoot.setPower(power);
+  rightshoot.setPower(power);
+  }
+  
+  }
   /**
    * This function is executed when this Op Mode is selected from the Driver Station.
    */
@@ -103,11 +119,12 @@ public class Drivetrainbeta extends LinearOpMode {
       frontright.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
       frontleft.setDirection(DcMotor.Direction.REVERSE);
       backleft.setDirection(DcMotor.Direction.REVERSE);
-      leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-      rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-      leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+      leftshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      rightshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      rightshoot.setDirection(DcMotor.Direction.REVERSE);
+      leftshoot.setDirection(DcMotor.Direction.REVERSE);
       //leftshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       //rightshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -115,9 +132,7 @@ public class Drivetrainbeta extends LinearOpMode {
       //flicker.setDirection(Servo.Direction.REVERSE);
       flicker.setPosition(0.5);
       flipper.setPosition(0);
-      //run for 1000 ticks
-      moveToPosition(1000, 0.5);
-      
+    }
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
@@ -127,15 +142,6 @@ public class Drivetrainbeta extends LinearOpMode {
       
       while (opModeIsActive()) {
         // Put loop blocks here.
-
-       private void moveToPosition(int targetTicks, double power) {
-         leftMotor.setTargetPosition(targetTicks);
-         rightMotor.setTargetPosition(targetTicks);
-         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         leftMotor.setPower(power);
-         rightMotor.setPower(power);
-        
         double leftStick = gamepad1.left_stick_y;
         double rightStick = gamepad1.right_stick_y;
 
@@ -173,9 +179,11 @@ public class Drivetrainbeta extends LinearOpMode {
 
         //long-distance shoot
         if (gamepad1.dpad_left){
-        leftshoot.setPower(longShootPower * -1);
-        rightshoot.setPower(longShootPower);
-        prevShootPower = longShootPower;
+        //run for 10000 ticks
+        moveToPosition(10000, 0.75);
+        //leftshoot.setPower(longShootPower * -1);
+        //rightshoot.setPower(longShootPower);
+        //prevShootPower = longShootPower;
         };
 
         //stop shooters on dpadDown
@@ -257,12 +265,11 @@ public class Drivetrainbeta extends LinearOpMode {
         telemetry.addData("BR Pow", backright.getPower());
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
-        telemetry.addData("Left Position", leftMotor.getCurrentPosition());
-        telemetry.addData("Right Position", rightMotor.getCurrentPosition());
+        telemetry.addData("Left Position", leftshoot.getCurrentPosition());
+        telemetry.addData("Right Position", rightshoot.getCurrentPosition());
         telemetry.addData("Flick Pos", flicker.getPosition());
         telemetry.addData("Flip Pos", flipper.getPosition());
         telemetry.update();
     }
   }
-}
 }
