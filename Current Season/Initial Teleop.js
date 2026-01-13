@@ -127,6 +127,19 @@ public class Drivetrainbeta extends LinearOpMode {
       
       while (opModeIsActive()) {
         // Put loop blocks here.
+
+       private void moveToPosition(int targetTicks, double power) {
+         leftMotor.setTargetPosition(targetTicks);
+         ri ghtMotor.setTargetPosition(targetTicks);
+         leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+         leftMotor.setPower(power);
+         rightMotor.setPower(power);
+       while (opModeIsActive() && (leftMotor.isBusy() || rightMotor.isBusy())) {
+           telemetry.addData("Left Position", leftMotor.getCurrentPosition());
+           telemetry.addData("Right Position", rightMotor.getCurrentPosition());
+           telemetry.update();
+       }
         
         double leftStick = gamepad1.left_stick_y;
         double rightStick = gamepad1.right_stick_y;
