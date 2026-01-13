@@ -135,11 +135,6 @@ public class Drivetrainbeta extends LinearOpMode {
          rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          leftMotor.setPower(power);
          rightMotor.setPower(power);
-       while (opModeIsActive() && (leftMotor.isBusy() || rightMotor.isBusy())) {
-           telemetry.addData("Left Position", leftMotor.getCurrentPosition());
-           telemetry.addData("Right Position", rightMotor.getCurrentPosition());
-           telemetry.update();
-       }
         
         double leftStick = gamepad1.left_stick_y;
         double rightStick = gamepad1.right_stick_y;
@@ -262,6 +257,8 @@ public class Drivetrainbeta extends LinearOpMode {
         telemetry.addData("BR Pow", backright.getPower());
         telemetry.addData("LS Pow", leftshoot.getPower());
         telemetry.addData("RS Pow", rightshoot.getPower());
+        telemetry.addData("Left Position", leftMotor.getCurrentPosition());
+        telemetry.addData("Right Position", rightMotor.getCurrentPosition());
         telemetry.addData("Flick Pos", flicker.getPosition());
         telemetry.addData("Flip Pos", flipper.getPosition());
         telemetry.update();
