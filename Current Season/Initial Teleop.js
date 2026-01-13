@@ -130,7 +130,7 @@ public class Drivetrainbeta extends LinearOpMode {
 
        private void moveToPosition(int targetTicks, double power) {
          leftMotor.setTargetPosition(targetTicks);
-         ri ghtMotor.setTargetPosition(targetTicks);
+         rightMotor.setTargetPosition(targetTicks);
          leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
          leftMotor.setPower(power);
