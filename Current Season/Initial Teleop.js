@@ -115,6 +115,9 @@ public class Drivetrainbeta extends LinearOpMode {
       //flicker.setDirection(Servo.Direction.REVERSE);
       flicker.setPosition(0.5);
       flipper.setPosition(0);
+      //run for 1000 ticks
+      moveToPosition(1000, 0.5);
+      
 
       // deadzone and slew settings
       final double DEADZONE = 0.05;       // joystick noise threshold
