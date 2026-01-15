@@ -73,21 +73,37 @@ public class Drivetrainbeta extends LinearOpMode {
   
   //function declarations
   private void moveToPosition(int targetTicks, double power) {
-  leftshoot.setTargetPosition(targetTicks);
+  leftshoot.setTargetPosition(-targetTicks);
   rightshoot.setTargetPosition(targetTicks);
-  //Add additional cases here to slow down motors when positions are unequal.
-  if (leftshoot.getCurrentPosition() > leftshoot.getTargetPosition() && rightshoot.getCurrentPosition() > rightshoot.getTargetPosition(){
+  
+  /*
+  else {
+  leftshoot.setTargetPosition(leftshoot.getTargetPosition() - targetTicks);
+  rightshoot.setTargetPosition(rightshoot.getTargetPosition() + targetTicks);
+  }
+  */
+  if (Math.abs(leftshoot.getCurrentPosition()) > Math.abs(rightshoot.getCurrentPosition()) || Math.abs(leftshoot.getCurrentPosition()) < Math.abs(rightshoot.getCurrentPosition())){
+  leftshoot.setTargetPosition(rightshoot.getCurrentPosition());
+  }
+  /*
+  if (Math.abs(rightshoot.getCurrentPosition()) > Math.abs(leftshoot.getCurrentPosition()) || Math.abs(rightshoot.getCurrentPosition()) < Math.abs(leftshoot.getCurrentPosition())){
+  rightshoot.setTargetPosition(leftshoot.getCurrentPosition());
+  }
+  */
+  if (Math.abs(leftshoot.getCurrentPosition()) > targetTicks || rightshoot.getCurrentPosition() > targetTicks){
   //leftshoot.setPower(0);
   //rightshoot.setPower(0);
-  leftshoot.getTargetPosition(leftshoot.getTargetPosition() + targetTicks);
-  rightshoot.getTargetPosition(rightshoot.getTargetPosition() + targetTicks);
+  leftshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+  rightshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+  //leftshoot.setTargetPosition(leftshoot.getTargetPosition() - targetTicks);
+  //rightshoot.setTargetPosition(rightshoot.getTargetPosition() + targetTicks);
+  rightshoot.setTargetPosition(targetTicks);
+  leftshoot.setTargetPosition(-targetTicks);
   }
-  else {
   leftshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
   rightshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
   leftshoot.setPower(-power);
   rightshoot.setPower(power);
-  }
   
   }
   /**
@@ -181,9 +197,9 @@ public class Drivetrainbeta extends LinearOpMode {
 
 
         //long-distance shoot
-        if (gamepad1.dpad_left){
+        while (gamepad1.dpad_left){
         //run for 10000 ticks
-        moveToPosition(10000, 0.75);
+        moveToPosition(100000, 0.75);
         //leftshoot.setPower(longShootPower * -1);
         //rightshoot.setPower(longShootPower);
         //prevShootPower = longShootPower;
@@ -194,7 +210,7 @@ public class Drivetrainbeta extends LinearOpMode {
         //leftshoot.setPower(0);
         //rightshoot.setPower(0);
         //prevShootPower = 0;
-        moveToPosition(10000, 0);
+        moveToPosition(100000, 0);
         }
 
         //Increase shoot power by 2%
@@ -271,6 +287,8 @@ public class Drivetrainbeta extends LinearOpMode {
         telemetry.addData("RS Pow", rightshoot.getPower());
         telemetry.addData("Left Position", leftshoot.getCurrentPosition());
         telemetry.addData("Right Position", rightshoot.getCurrentPosition());
+        telemetry.addData("Left Target", leftshoot.getTargetPosition());
+        telemetry.addData("Right Target", rightshoot.getTargetPosition());
         telemetry.addData("Flick Pos", flicker.getPosition());
         telemetry.addData("Flip Pos", flipper.getPosition());
         telemetry.update();
