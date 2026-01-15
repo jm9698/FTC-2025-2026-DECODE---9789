@@ -19,32 +19,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
+//import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import java.lang.Math;
 
-//Gamepad Key
-  //Motors
-    //Drivetrain Motors -> Tank Drive
-    //Launch Motors ->
-      //Dpad_Left -> Start
-      //Dpad_Right -> Stop
-      //Dpad_Up -> Increase Speed
-      //Dpad_Down -> Decrease Speed
-    //Intake Motor ->
-      //Y -> Intake
-      //A -> Outtake
-  //Servos
-    //Flipper ->
-      //Right Bumper -> Push Artifact
-      //onRelease -> Reset
-    //Flicker ->
-      //X -> Reset
-      //B -> Flick
-  
-    
 @TeleOp(name = "Telop 2025-2026 - Beta")
 public class Drivetrainbeta extends LinearOpMode {
 
@@ -52,8 +36,9 @@ public class Drivetrainbeta extends LinearOpMode {
   private DcMotor backright;
   private DcMotor frontleft;
   private DcMotor frontright;
-  private DcMotor leftshoot;
-  private DcMotor rightshoot;
+  // change shooter motors to DcMotorEx for velocity control
+  private DcMotorEx leftshoot;
+  private DcMotorEx rightshoot;
   private DcMotor intake;
   private Servo flicker;
   private Servo flipper;
@@ -64,71 +49,73 @@ public class Drivetrainbeta extends LinearOpMode {
   private double prevShootPower = 0.0;
   private double prevIntakePower = 0.0;
 
-// cooldown to control shootPower increases
+  // cooldown to control shootPower increases
   private double Cooldown = 1.0;
-  
-  // constants for shooting
-  private double shortShootPower = 0.58;
-  private double longShootPower = 0.58;
-  
-  //function declarations
-  private void moveToPosition(int targetTicks, double power) {
-  leftshoot.setTargetPosition(-targetTicks);
-  rightshoot.setTargetPosition(targetTicks);
-  
-  /*
-  else {
-  leftshoot.setTargetPosition(leftshoot.getTargetPosition() - targetTicks);
-  rightshoot.setTargetPosition(rightshoot.getTargetPosition() + targetTicks);
+
+  // shooter velocity control state
+  private boolean shooterVelocityActive = false;
+  private double shooterTargetRPM = 0.0;
+  private boolean prevDpadLeft = false;
+  private boolean prevDpadRight = false;
+
+  // TUNE: choose a sensible default RPM for your flywheels; adjust after testing
+  private final double DEFAULT_SHOOTER_RPM = 3000.0; // example starting value, tune for your hardware
+
+  // helper: convert RPM -> encoder ticks per second for this motor
+  private double rpmToTicksPerSecond(double rpm, DcMotorEx m) {
+    MotorConfigurationType mt = m.getMotorType();
+    double ticksPerRev = mt.getTicksPerRev();
+    return rpm * ticksPerRev / 60.0;
   }
-  */
-  if (Math.abs(leftshoot.getCurrentPosition()) > Math.abs(rightshoot.getCurrentPosition()) || Math.abs(leftshoot.getCurrentPosition()) < Math.abs(rightshoot.getCurrentPosition())){
-  leftshoot.setTargetPosition(rightshoot.getCurrentPosition());
+
+  // helper: convert measured velocity (ticks/sec) -> RPM
+  private double ticksPerSecondToRpm(double ticksPerSecond, DcMotorEx m) {
+    MotorConfigurationType mt = m.getMotorType();
+    double ticksPerRev = mt.getTicksPerRev();
+    return ticksPerSecond * 60.0 / ticksPerRev;
   }
-  /*
-  if (Math.abs(rightshoot.getCurrentPosition()) > Math.abs(leftshoot.getCurrentPosition()) || Math.abs(rightshoot.getCurrentPosition()) < Math.abs(leftshoot.getCurrentPosition())){
-  rightshoot.setTargetPosition(leftshoot.getCurrentPosition());
+
+  // start shooter velocity control to targetRPM (edge-triggered)
+  private void startShooterRPM(double rpm) {
+    shooterTargetRPM = Math.abs(rpm);
+    // Optional: tune PIDF coefficients for RUN_USING_ENCODER to get stable velocity control
+    // Example (commented): new PIDFCoefficients(kP, kI, kD, kF)
+    // PIDFCoefficients pidf = new PIDFCoefficients(5.0, 0.0, 0.0, 0.0);
+    // leftshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+    // rightshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+
+    leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    // Convert RPM to ticks/sec and use setVelocity. Left is inverted in previous code so send negative.
+    double ticksPerSec = rpmToTicksPerSecond(shooterTargetRPM, rightshoot);
+    leftshoot.setVelocity(-ticksPerSec);
+    rightshoot.setVelocity(ticksPerSec);
+
+    shooterVelocityActive = true;
   }
-  */
-  if (Math.abs(leftshoot.getCurrentPosition()) > targetTicks || rightshoot.getCurrentPosition() > targetTicks){
-  //leftshoot.setPower(0);
-  //rightshoot.setPower(0);
-  leftshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-  rightshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-  //leftshoot.setTargetPosition(leftshoot.getTargetPosition() - targetTicks);
-  //rightshoot.setTargetPosition(rightshoot.getTargetPosition() + targetTicks);
-  rightshoot.setTargetPosition(targetTicks);
-  leftshoot.setTargetPosition(-targetTicks);
+
+  // stop shooter velocity control
+  private void stopShooterRPM() {
+    shooterVelocityActive = false;
+    leftshoot.setVelocity(0.0);
+    rightshoot.setVelocity(0.0);
+    leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
   }
-  leftshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  rightshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  leftshoot.setPower(-power);
-  rightshoot.setPower(power);
-  
-  }
-  /**
-   * This function is executed when this Op Mode is selected from the Driver Station.
-   */
+
   @Override
   public void runOpMode() {
     backleft = hardwareMap.get(DcMotor.class, "backleft");
     backright = hardwareMap.get(DcMotor.class, "backright");
     frontleft = hardwareMap.get(DcMotor.class, "frontleft");
     frontright = hardwareMap.get(DcMotor.class, "frontright");
-    leftshoot = hardwareMap.get(DcMotor.class, "leftshoot");
-    rightshoot = hardwareMap.get(DcMotor.class, "rightshoot");
+    // get DcMotorEx instances for velocity control
+    leftshoot = hardwareMap.get(DcMotorEx.class, "leftshoot");
+    rightshoot = hardwareMap.get(DcMotorEx.class, "rightshoot");
     intake = hardwareMap.get(DcMotor.class, "intake");
     flicker = hardwareMap.get(Servo.class, "flicker");
     flipper = hardwareMap.get(Servo.class, "flipper");
-
-/*
-    backleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    frontleft.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    backright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    frontright.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    */
-    //leftshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
-    //rightshoot.setZeroPowerBehavior(ZeroPowerBehavior.COAST);
 
     waitForStart();
     if (opModeIsActive()) {
@@ -142,96 +129,67 @@ public class Drivetrainbeta extends LinearOpMode {
       rightshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      //rightshoot.setDirection(DcMotor.Direction.REVERSE);
-      //leftshoot.setDirection(DcMotor.Direction.REVERSE);
-      //leftshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
-      //rightshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-      //Initalize Servo positions here
-      //flicker.setDirection(Servo.Direction.REVERSE);
       flicker.setPosition(0.5);
       flipper.setPosition(0);
     }
 
-      // deadzone and slew settings
-      final double DEADZONE = 0.05;       // joystick noise threshold
-      final double MAX_DELTA = 0.04;      // max change in power per loop (tweak for responsiveness)
-      
-      // Put run blocks here.
-      
-      while (opModeIsActive()) {
-        // Put loop blocks here.
-        double leftStick = gamepad1.left_stick_y;
-        double rightStick = gamepad1.right_stick_y;
+    final double DEADZONE = 0.05;
+    final double MAX_DELTA = 0.04;
 
-        leftStick = (Math.abs(leftStick) < DEADZONE) ? 0.0 : leftStick;
-        rightStick = (Math.abs(rightStick) < DEADZONE) ? 0.0 : rightStick;
+    while (opModeIsActive()) {
+      double leftStick = gamepad1.left_stick_y;
+      double rightStick = gamepad1.right_stick_y;
 
-        double targetLeft = -0.75 * leftStick;
-        double targetRight = -0.75 * rightStick;
+      leftStick = (Math.abs(leftStick) < DEADZONE) ? 0.0 : leftStick;
+      rightStick = (Math.abs(rightStick) < DEADZONE) ? 0.0 : rightStick;
 
-        double leftDelta = targetLeft - prevLeftPower;
-        if (leftDelta > MAX_DELTA) leftDelta = MAX_DELTA;
-        if (leftDelta < -MAX_DELTA) leftDelta = -MAX_DELTA;
-        double appliedLeft = prevLeftPower + leftDelta;
+      double targetLeft = -0.75 * leftStick;
+      double targetRight = -0.75 * rightStick;
 
-        double rightDelta = targetRight - prevRightPower;
-        if (rightDelta > MAX_DELTA) rightDelta = MAX_DELTA;
-        if (rightDelta < -MAX_DELTA) rightDelta = -MAX_DELTA;
-        double appliedRight = prevRightPower + rightDelta;
-        
-        // Apply to motors (tank drive)
-        backright.setPower(appliedRight);
-        frontright.setPower(appliedRight);
-        backleft.setPower(appliedLeft);
-        frontleft.setPower(appliedLeft);
+      double leftDelta = targetLeft - prevLeftPower;
+      if (leftDelta > MAX_DELTA) leftDelta = MAX_DELTA;
+      if (leftDelta < -MAX_DELTA) leftDelta = -MAX_DELTA;
+      double appliedLeft = prevLeftPower + leftDelta;
 
-        //short-distance shoot
-        /*
-        if (gamepad1.a){
-        leftshoot.setPower(shortShootPower * -1);
-        rightshoot.setPower(shortShootPower);
-        prevShootPower = shortShootPower;
-        }
-        */
+      double rightDelta = targetRight - prevRightPower;
+      if (rightDelta > MAX_DELTA) rightDelta = MAX_DELTA;
+      if (rightDelta < -MAX_DELTA) rightDelta = -MAX_DELTA;
+      double appliedRight = prevRightPower + rightDelta;
 
+      backright.setPower(appliedRight);
+      frontright.setPower(appliedRight);
+      backleft.setPower(appliedLeft);
+      frontleft.setPower(appliedLeft);
 
-        //long-distance shoot
-        while (gamepad1.dpad_left){
-        //run for 10000 ticks
-        moveToPosition(100000, 0.75);
-        //leftshoot.setPower(longShootPower * -1);
-        //rightshoot.setPower(longShootPower);
-        //prevShootPower = longShootPower;
-        };
+      // Edge-detect D-pad Left to start shooter velocity control; D-pad Right to stop
+      if (gamepad1.dpad_left && !prevDpadLeft) {
+        // start shooter at DEFAULT_SHOOTER_RPM (tune as needed)
+        startShooterRPM(DEFAULT_SHOOTER_RPM);
+      }
+      if (gamepad1.dpad_right && !prevDpadRight) {
+        stopShooterRPM();
+      }
 
-        //stop shooters on dpadDown
-        if (gamepad1.dpad_right){
-        //leftshoot.setPower(0);
-        //rightshoot.setPower(0);
-        //prevShootPower = 0;
-        moveToPosition(100000, 0);
-        }
+      // Optional: show measured RPMs
+      double leftVelocityTPS = leftshoot.getVelocity();   // ticks per second
+      double rightVelocityTPS = rightshoot.getVelocity(); // ticks per second
+      double leftRPM = ticksPerSecondToRpm(Math.abs(leftVelocityTPS), leftshoot);
+      double rightRPM = ticksPerSecondToRpm(Math.abs(rightVelocityTPS), rightshoot);
 
-        //Increase shoot power by 2%
-        if (gamepad1.dpad_up){
-        leftshoot.setPower(-prevShootPower - 0.02 * Cooldown);
-        rightshoot.setPower(prevShootPower + 0.02 * Cooldown);
-        Cooldown = 0;
-        sleep(1000);
-        Cooldown = 1;
-        prevShootPower = prevShootPower + 0.02 * Cooldown;
-        }
-
-        //Decrease shoot power by 2%
-        if (gamepad1.dpad_down){
-        leftshoot.setPower(-prevShootPower + 0.02 * Cooldown);
-        rightshoot.setPower(prevShootPower - 0.02 * Cooldown);
-        Cooldown = 0;
-        sleep(1000);
-        Cooldown = 1;
-        prevShootPower = prevShootPower - 0.02 * Cooldown;
-        }
+      prevDpadLeft = gamepad1.dpad_left;
+      prevDpadRight = gamepad1.dpad_right;
+/*
+      if (gamepad1.dpad_up){
+        // example: increase default RPM by 2% (and apply if active)
+        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM * 1.02; // NOTE: make DEFAULT_SHOOTER_RPM non-final if you want to change it
+        if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
+      }
+      if (gamepad1.dpad_down){
+        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM * 0.98;
+        if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
+      }
+      */
 
         if (gamepad1.rightBumperWasReleased()){
           flipper.setPosition(0);
@@ -291,6 +249,10 @@ public class Drivetrainbeta extends LinearOpMode {
         telemetry.addData("Right Target", rightshoot.getTargetPosition());
         telemetry.addData("Flick Pos", flicker.getPosition());
         telemetry.addData("Flip Pos", flipper.getPosition());
+        telemetry.addData("Shooter Active", shooterVelocityActive);
+        telemetry.addData("Left RPM", "%.0f", leftRPM);
+        telemetry.addData("Right RPM", "%.0f", rightRPM);
+        telemetry.addData("Shooter Active (vel)", shooterVelocityActive);
         telemetry.update();
     }
   }
