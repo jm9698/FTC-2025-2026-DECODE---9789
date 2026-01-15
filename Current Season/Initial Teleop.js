@@ -75,14 +75,17 @@ public class Drivetrainbeta extends LinearOpMode {
   private void moveToPosition(int targetTicks, double power) {
   leftshoot.setTargetPosition(targetTicks);
   rightshoot.setTargetPosition(targetTicks);
-  if (leftshoot.getCurrentPosition() > 10000 && rightshoot.getCurrentPosition() > 10000){
-  leftshoot.setPower(0);
-  rightshoot.setPower(0);
+  //Add additional cases here to slow down motors when positions are unequal.
+  if (leftshoot.getCurrentPosition() > leftshoot.getTargetPosition() && rightshoot.getCurrentPosition() > rightshoot.getTargetPosition(){
+  //leftshoot.setPower(0);
+  //rightshoot.setPower(0);
+  leftshoot.getTargetPosition(leftshoot.getTargetPosition() + targetTicks);
+  rightshoot.getTargetPosition(rightshoot.getTargetPosition() + targetTicks);
   }
   else {
   leftshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
   rightshoot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  leftshoot.setPower(power);
+  leftshoot.setPower(-power);
   rightshoot.setPower(power);
   }
   
@@ -123,8 +126,8 @@ public class Drivetrainbeta extends LinearOpMode {
       rightshoot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
       leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
       rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      rightshoot.setDirection(DcMotor.Direction.REVERSE);
-      leftshoot.setDirection(DcMotor.Direction.REVERSE);
+      //rightshoot.setDirection(DcMotor.Direction.REVERSE);
+      //leftshoot.setDirection(DcMotor.Direction.REVERSE);
       //leftshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       //rightshoot.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.COAST);
       intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -188,9 +191,10 @@ public class Drivetrainbeta extends LinearOpMode {
 
         //stop shooters on dpadDown
         if (gamepad1.dpad_right){
-        leftshoot.setPower(0);
-        rightshoot.setPower(0);
-        prevShootPower = 0;
+        //leftshoot.setPower(0);
+        //rightshoot.setPower(0);
+        //prevShootPower = 0;
+        moveToPosition(10000, 0);
         }
 
         //Increase shoot power by 2%
