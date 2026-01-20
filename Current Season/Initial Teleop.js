@@ -59,7 +59,7 @@ public class Drivetrainbeta extends LinearOpMode {
   private boolean prevDpadRight = false;
 
   // TUNE: choose a sensible default RPM for your flywheels; adjust after testing
-  private final double DEFAULT_SHOOTER_RPM = 3000.0; // example starting value, tune for your hardware
+  private double DEFAULT_SHOOTER_RPM = 30.0; // example starting value, tune for your hardware
 
   // helper: convert RPM -> encoder ticks per second for this motor
   private double rpmToTicksPerSecond(double rpm, DcMotorEx m) {
@@ -179,24 +179,28 @@ public class Drivetrainbeta extends LinearOpMode {
 
       prevDpadLeft = gamepad1.dpad_left;
       prevDpadRight = gamepad1.dpad_right;
-/*
+
       if (gamepad1.dpad_up){
-        // example: increase default RPM by 2% (and apply if active)
-        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM * 1.02; // NOTE: make DEFAULT_SHOOTER_RPM non-final if you want to change it
+        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM + Cooldown; // NOTE: make DEFAULT_SHOOTER_RPM non-final if you want to change it
         if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
+      }
+      if (gamepad1.dpadUpWasReleased()){
+        Cooldown = 0;
       }
       if (gamepad1.dpad_down){
-        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM * 0.98;
+        DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM + Cooldown;
         if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
       }
-      */
+      if (gamepad1.dpadDownWasReleased()){
+        Cooldown = 0;
+      }
 
         if (gamepad1.rightBumperWasReleased()){
           flipper.setPosition(0);
           flicker.setPosition(0.5);
         }
         if (gamepad1.right_bumper){
-          flipper.setPosition(1);
+          flipper.setPosition(0.4);
           flicker.setPosition(0.9);
         }
         /*
@@ -228,6 +232,7 @@ public class Drivetrainbeta extends LinearOpMode {
             prevIntakePower = 0;
           }
         }
+        
         // Store for next loop
         prevLeftPower = appliedLeft;
         prevRightPower = appliedRight;
