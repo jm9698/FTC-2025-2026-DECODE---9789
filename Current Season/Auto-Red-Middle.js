@@ -130,40 +130,20 @@ waitForStart();
     frontleft.setPower(0.4);
     frontright.setPower(-0.4);
     }
-    //Rotate Left 1.3 s
-    else if (runtime.seconds() <= 7.2) {
+    //Rotate Left 0.6 s
+    else if (runtime.seconds() <= 19.7) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
-    startShooterRPM(28.0);
+    startShooterRPM(26.0);
     }
-    //Stop 1 s
-    else if (runtime.seconds() <= 10.3) {
-    backleft.setPower(0);
-    backright.setPower(0);
-    frontleft.setPower(0);
-    frontright.setPower(0);
-    }
-    //Allow 5.5 s to spin up to max speed
-    else if (runtime.seconds() <= 17.3) {
-    flipper.setPosition(0.37);
+    //Allow 12.6 s to spin up to max speed
+    else if (runtime.seconds() <= 25) {
     intake.setPower(-0.75);
-    }
-    //Flick top artifact into the launcher and reset after 1 second
-    else if (runtime.seconds() <= 18.3) {
-    flipper.setPosition(0);
-    }
-    else if (runtime.seconds() <= 19.3) {
     flipper.setPosition(1);
     }
-    else if (runtime.seconds() <= 20.3) {
-    flipper.setPosition(0);
-    }
-    else if (runtime.seconds() <= 21.3) {
-    flipper.setPosition(1);
-    }
-    else if (runtime.seconds() <= 22.3) {
+    else if (runtime.seconds() <= 29) {
     flipper.setPosition(0);
     stopShooterRPM();
     }
