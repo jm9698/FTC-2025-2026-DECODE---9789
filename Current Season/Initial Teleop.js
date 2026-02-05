@@ -29,6 +29,22 @@ import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import java.lang.Math;
 
+
+//Controller Map
+  //Gamepad1
+  //Left + Right Joystick -> Tank Drive
+  //Gamepad2
+  // Y -> Intake
+  // A -> Outtake
+  // B -> Stop Intake
+  // Left Dpad -> Start Shooter
+  // Right Dpad -> Stop Shooter
+  // Up Dpad -> Increase Shooter Speed by "1 RPM"
+  // Down Dpad -> Decrease Shooter Speed by "1 RPM"
+  // Right Bumper -> 
+  //  Hold for intake
+  //  Release for reset
+  
 @TeleOp(name = "Telop 2025-2026 - Beta")
 public class Drivetrainbeta extends LinearOpMode {
 
@@ -50,7 +66,7 @@ public class Drivetrainbeta extends LinearOpMode {
   private double prevIntakePower = 0.0;
 
   // cooldown to control shootPower increases
-  private double Cooldown = 1.0;
+  private double Cooldown = 0.0;
 
   // shooter velocity control state
   private boolean shooterVelocityActive = false;
@@ -163,11 +179,11 @@ public class Drivetrainbeta extends LinearOpMode {
       frontleft.setPower(appliedLeft);
 
       // Edge-detect D-pad Left to start shooter velocity control; D-pad Right to stop
-      if (gamepad1.dpad_left && !prevDpadLeft) {
+      if (gamepad2.dpad_left && !prevDpadLeft) {
         // start shooter at DEFAULT_SHOOTER_RPM (tune as needed)
         startShooterRPM(DEFAULT_SHOOTER_RPM);
       }
-      if (gamepad1.dpad_right && !prevDpadRight) {
+      if (gamepad2.dpad_right && !prevDpadRight) {
         stopShooterRPM();
       }
 
@@ -180,59 +196,41 @@ public class Drivetrainbeta extends LinearOpMode {
       prevDpadLeft = gamepad1.dpad_left;
       prevDpadRight = gamepad1.dpad_right;
 
-      if (gamepad1.dpad_up){
+      if (gamepad2.dpad_up){
+        Cooldown = 1;
         DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM + Cooldown; // NOTE: make DEFAULT_SHOOTER_RPM non-final if you want to change it
         if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
       }
-      if (gamepad1.dpadUpWasReleased()){
+      if (gamepad2.dpadUpWasReleased()){
         Cooldown = 0;
       }
-      if (gamepad1.dpad_down){
+      if (gamepad2.dpad_down){
+        Cooldown = 1;
         DEFAULT_SHOOTER_RPM = DEFAULT_SHOOTER_RPM + Cooldown;
         if (shooterVelocityActive) startShooterRPM(DEFAULT_SHOOTER_RPM);
       }
-      if (gamepad1.dpadDownWasReleased()){
+      if (gamepad2.dpadDownWasReleased()){
         Cooldown = 0;
       }
 
-        if (gamepad1.rightBumperWasReleased()){
+        if (gamepad2.rightBumperWasReleased()){
           flipper.setPosition(0);
           flicker.setPosition(0.5);
         }
-        if (gamepad1.right_bumper){
+        if (gamepad2.right_bumper){
           flipper.setPosition(0.4);
           flicker.setPosition(0.9);
         }
-        /*
-        if (gamepad1.x){
-          flicker.setPosition(0);
-        }
-        if (gamepad1.b){
-          flicker.setPosition(1);
-        }
-        */
         
-        if (gamepad1.y){
-          if (prevIntakePower >= 0){
+        if (gamepad2.y){
           intake.setPower(-0.75);
-          prevIntakePower = -0.75;
-          }
-          else if (prevIntakePower < 0){
-            intake.setPower(0);
-            prevIntakePower = 0;
-          }
         }
-        if (gamepad1.a){
-          if (prevIntakePower <= 0){
+        if (gamepad2.a){
           intake.setPower(0.75);
-          prevIntakePower = 0.75;
-          }
-          else if (prevIntakePower > 0){
-            intake.setPower(0);
-            prevIntakePower = 0;
-          }
         }
-        
+        if (gamepad2.b){
+          intake.setPower(0);
+        }
         // Store for next loop
         prevLeftPower = appliedLeft;
         prevRightPower = appliedRight;
