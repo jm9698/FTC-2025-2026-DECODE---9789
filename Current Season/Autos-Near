@@ -110,18 +110,25 @@ waitForStart();
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
-    if (runtime.seconds() <= 4){
+    if (runtime.seconds() <= 3){
+    backleft.setPower(0.4);
+    backright.setPower(-0.4);
+    frontleft.setPower(0.4);
+    frontright.setPower(-0.4);
+    }
+    if (runtime.seconds() <= 5.8){
     backleft.setPower(0.3);
     backright.setPower(0.3);
     frontleft.setPower(0.3);
     frontright.setPower(0.3);
     }
     //Forward 4 s
-    else if (runtime.seconds() <= 5) {
+    else if (runtime.seconds() <= 7) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
+    //startShooterRPM(26.0);
     }
     //Stop 1 s
     else if (runtime.seconds() <= 19.7) {
