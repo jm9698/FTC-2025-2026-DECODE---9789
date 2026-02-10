@@ -124,13 +124,13 @@ waitForStart();
     frontright.setPower(0);
     }
     //Stop 1 s
-    else if (runtime.seconds() <= 6.5){
+    else if (runtime.seconds() <= 6.1){
     backleft.setPower(-0.4);
     backright.setPower(0.4);
     frontleft.setPower(-0.4);
     frontright.setPower(0.4);
     }
-    //Rotate Right 0.6 s
+    //Rotate Right 1.1 s
     else if (runtime.seconds() <= 19.7) {
     backleft.setPower(0);
     backright.setPower(0);
