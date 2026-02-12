@@ -1,24 +1,7 @@
-/*
-Copyright 2025 FIRST Tech Challenge Team 23303
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
-associated documentation files (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial
-portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
-NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -75,7 +58,7 @@ public class Drivetrainbeta extends LinearOpMode {
   private boolean prevDpadRight = false;
 
   // TUNE: choose a sensible default RPM for your flywheels; adjust after testing
-  private double DEFAULT_SHOOTER_RPM = 30.0; // example starting value, tune for your hardware
+  private double DEFAULT_SHOOTER_RPM = 27.0; // example starting value, tune for your hardware
 
   // helper: convert RPM -> encoder ticks per second for this motor
   private double rpmToTicksPerSecond(double rpm, DcMotorEx m) {
@@ -100,8 +83,18 @@ public class Drivetrainbeta extends LinearOpMode {
     // leftshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
     // rightshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
 
-    leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+PIDFCoefficients pidf = new PIDFCoefficients(
+    50.0,   // P: High P helps recover from voltage sags quickly
+    0.1,    // I: Small I to avoid oscillation
+    0.0,    // D: Keep low to avoid noise
+    0.2   // F: High feed-forward to maintain velocity
+  );
+  
+  leftshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+  rightshoot.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+  
+    //leftshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    //rightshoot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     // Convert RPM to ticks/sec and use setVelocity. Left is inverted in previous code so send negative.
     double ticksPerSec = rpmToTicksPerSecond(shooterTargetRPM, rightshoot);
