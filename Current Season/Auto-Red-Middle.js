@@ -110,7 +110,7 @@ waitForStart();
       //Set inital servo positions as required
 
     while (opModeIsActive()) {
-    if (runtime.seconds() <= 4){
+    if (runtime.seconds() <= 4.1){
     backleft.setPower(-0.3);
     backright.setPower(-0.3);
     frontleft.setPower(-0.3);
@@ -131,19 +131,26 @@ waitForStart();
     frontright.setPower(-0.4);
     }
     //Rotate Right 1.1 s
-    else if (runtime.seconds() <= 19.7) {
+    else if (runtime.seconds() <= 13) {
     backleft.setPower(0);
     backright.setPower(0);
     frontleft.setPower(0);
     frontright.setPower(0);
-    startShooterRPM(26.0);
+    startShooterRPM(25.5);
     }
     //Allow 12.6 s to spin up to max speed
-    else if (runtime.seconds() <= 25) {
+    else if (runtime.seconds() <= 14) {
     intake.setPower(-0.75);
+    flipper.setPosition(0.3);
+    }
+    else if (runtime.seconds() <= 20) {
+    flipper.setPosition(0);
+    }
+    else if (runtime.seconds() <= 21) {
+    intake.setPower(0);
     flipper.setPosition(1);
     }
-    else if (runtime.seconds() <= 29) {
+    else if (runtime.seconds() <= 24) {
     flipper.setPosition(0);
     stopShooterRPM();
     }
